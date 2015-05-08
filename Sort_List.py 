@@ -1,0 +1,62 @@
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    # @param {ListNode} head
+    # @return {ListNode}
+    def sortList(self, head):
+        if not head:
+            return None
+        if not head.next:
+            return head
+
+        def split_halves(h):
+            tmp1 = head
+            tmp2 = head
+            while True:
+                tmp2 = tmp2.next
+                if tmp2:
+                    tmp2 = tmp2.next
+                    tmp = tmp1
+                    tmp1 = tmp1.next
+                if not tmp2:
+                    tmp.next = None
+                    return tmp1
+
+        def merge(head, l_part, r_part):
+            tmp_head = head
+            while l_part and r_part:
+                if l_part.val <= r_part.val:
+                    tmp_head.next = l_part
+                    tmp_head = tmp_head.next
+                    l_part = l_part.next
+                else:
+                    tmp_head.next = r_part
+                    tmp_head = tmp_head.next
+                    r_part = r_part.next
+            if l_part and (not r_part):
+                tmp_head.next = l_part
+            elif r_part and (not l_part):
+                tmp_head.next = r_part
+            return head.next
+        r_part = split_halves(head)
+        head = self.sortList(head)
+        r_part = self.sortList(r_part)
+        dummy_head = ListNode(False)
+        dummy_head.next = head
+        head = merge(dummy_head, head, r_part)
+        return head
+
+
+if __name__ == '__main__':
+    a = ListNode(3)
+    b = ListNode(2)
+    c = ListNode(4)
+    a.next = b
+    b.next = c
+    A = Solution()
+    res = A.sortList(a)
+    print '````', res.val, res.next.val, res.next.next.val
